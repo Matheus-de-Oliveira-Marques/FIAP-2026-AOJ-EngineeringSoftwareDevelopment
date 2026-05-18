@@ -1,31 +1,36 @@
 import uuid
 
-class ProcessadorPedido:
+class ThunderMegazord:
     """
-    CLASSE MONSTRO: Esta classe viola múltiplos princípios SOLID.
-    - SRP: Faz tudo (validação, desconto, frete, persistência, notificação).
-    - OCP: Se surgir um novo tipo de desconto ou frete, precisa editar esta classe.
-    - DIP: Depende de implementações concretas (instancia serviços internamente).
+    THUNDER MEGAZORD: Uma classe gigante que faz tudo ao mesmo tempo.
+    Sua missão é desmontar este Megazord em componentes menores e especializados (SOLID).
+    
+    Violações:
+    - SRP: Valida, calcula desconto, calcula frete, salva no banco e envia e-mail.
+    - OCP: Adicionar novos descontos ou regiões exige abrir este peito de metal e soldar novo código.
+    - DIP: Totalmente acoplado a implementações concretas de IO e Log.
     """
     
-    def processar(self, pedido_data: dict) -> bool:
-        # 1. Validação de Dados (Responsabilidade de Validação)
+    def processar_comando_central(self, pedido_data: dict) -> bool:
+        print("--- INICIANDO PROTOCOLO MEGAZORD ---")
+        
+        # 1. Sensores de Validação
         if not pedido_data.get("itens"):
-            print("Erro: Pedido sem itens")
+            print("[ALERTA] Sistema sem munição (pedido sem itens)")
             return False
             
-        # 2. Cálculo de Desconto (Violação de OCP - Acoplamento com tipos de cliente)
+        # 2. Núcleo de Desconto (OCP Nightmare)
         valor_total = pedido_data.get("valor_total", 0.0)
         tipo_cliente = pedido_data.get("tipo_cliente", "comum")
         
         if tipo_cliente == "vip":
-            valor_total *= 0.85  # 15% de desconto
+            valor_total *= 0.85
         elif tipo_cliente == "premium":
-            valor_total *= 0.90  # 10% de desconto
+            valor_total *= 0.90
         else:
-            valor_total *= 0.95  # 5% de desconto (padrão)
+            valor_total *= 0.95
             
-        # 3. Cálculo de Frete (Violação de OCP - Acoplamento com regiões)
+        # 3. Propulsores de Frete (OCP Nightmare)
         regiao = pedido_data.get("regiao", "sudeste")
         frete = 0.0
         if regiao == "norte":
@@ -39,26 +44,26 @@ class ProcessadorPedido:
             
         valor_final = valor_total + frete
         
-        # 4. Persistência (Violação de SRP/DIP - Conhecimento de IO/Banco)
+        # 4. Memória de Armazenamento (SRP/DIP Violation)
         pedido_id = str(uuid.uuid4())[:8]
-        print(f"Salvando pedido {pedido_id} no Banco de Dados...")
-        print(f"Valor Final: R$ {valor_final:.2f}")
+        print(f"[LOG] Gravando dados no cristal de memória {pedido_id}...")
+        print(f"[STATUS] Energia Final Requerida: R$ {valor_final:.2f}")
         
-        # 5. Notificação (Violação de SRP/DIP - Conhecimento de E-mail)
+        # 5. Comunicação Intergaláctica (SRP/DIP Violation)
         email = pedido_data.get("email")
         if email:
-            print(f"Enviando e-mail de confirmação para {email}...")
+            print(f"[SINAL] Enviando telemetria para {email}...")
             
+        print("--- OPERAÇÃO MEGAZORD CONCLUÍDA ---")
         return True
 
-# Exemplo de uso rápido para teste manual
 if __name__ == "__main__":
-    p = ProcessadorPedido()
-    pedido = {
-        "itens": ["Laptop", "Mouse"],
-        "valor_total": 1000.0,
+    megazord = ThunderMegazord()
+    missao = {
+        "itens": ["Espada Thunder", "Escudo"],
+        "valor_total": 5000.0,
         "tipo_cliente": "vip",
-        "regiao": "sul",
-        "email": "aluno@fiap.com.br"
+        "regiao": "norte",
+        "email": "zordon@alameda.com"
     }
-    p.processar(pedido)
+    megazord.processar_comando_central(missao)
