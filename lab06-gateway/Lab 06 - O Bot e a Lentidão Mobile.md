@@ -20,9 +20,10 @@ Sua missão é transformar um servidor FastAPI básico em um Gateway inteligente
 ---
 
 ## 🗺️ Passo 1: O Cenário "Chato"
-1. No seu Codespaces, navegue até a pasta do laboratório:
+1. No seu Codespaces, navegue até a pasta do laboratório e garanta que as dependências de rede estejam instaladas:
    ```bash
    cd lab06-gateway
+   pip install fastapi uvicorn httpx slowapi
    ```
 2. Inicie o Gateway (que por enquanto não faz nada):
    ```bash
