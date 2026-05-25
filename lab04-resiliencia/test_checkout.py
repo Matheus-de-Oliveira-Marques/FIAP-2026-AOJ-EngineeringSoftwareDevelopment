@@ -1,9 +1,10 @@
 import pytest
 import time
+import responses
 from pytest_bdd import scenario, given, when, then, parsers
 from checkout_service import CheckoutService
-import responses # Usaremos responses para mockar a latência sem subir um server real
 
+@responses.activate
 @scenario('resiliencia.feature', 'O Anti-Fraude está instável e deve falhar rápido')
 def test_resiliencia_antifraude():
     pass
@@ -14,15 +15,17 @@ def checkout():
 
 @given('que o serviço de Anti-Fraude está com latência de 10s')
 def setup_antifraude_lento():
-    # Mockando a resposta lenta
-    responses.add(
+    def request_callback(request):
+        # Simula o lag real na rede que causará a falha no teste original
+        time.sleep(2.0) 
+        return (200, {}, '{"status": "OK"}')
+
+    responses.add_callback(
         responses.GET,
         "http://api-antifraude/v1/validar",
-        json={"status": "OK"},
-        status=200
+        callback=request_callback,
+        content_type='application/json',
     )
-    # Simulamos o delay no mock (ou o aluno sentirá no teste real se usarmos um server)
-    # Para o lab, o aluno verá o tempo de execução subir
 
 @when(parsers.parse('eu tento processar um pagamento de "{valor}"'), target_fixture="resultado")
 def processar_pagamento(checkout, valor):
@@ -43,4 +46,7 @@ def validar_tempo_resposta(resultado, limite):
 def validar_status(resultado, status):
     if "error" in resultado:
         pytest.fail(f"Erro inesperado: {resultado['error']}")
+    
+    # Se o aluno não implementar o fallback, o status vindo do mock será "OK"
+    # O teste espera "ANALISE_MANUAL" (que é o resultado do Fallback do Circuit Breaker)
     assert resultado["response"]["status"] == status
